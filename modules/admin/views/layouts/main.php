@@ -29,16 +29,16 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
+        'brandLabel' => 'Blogrysakov',
+        'brandUrl' => '',
         'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
+            'class' => 'navbar-inverse',
         ],
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
+            ['label' => 'Home', 'url' => ['default/index']],
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ? (
@@ -58,14 +58,27 @@ AppAsset::register($this);
     NavBar::end();
     ?>
 
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
+    <div class="container-fliud">
+        <div class="row">
+            <div class="col-md-2">
+                <?php echo Nav::widget([
+                    'options' => [
+                        'class' => 'nav nav-pills nav-stacked',
+                    ],
+                    'items' => [
+                        ['label' => 'Posts', 'url' => ['posts/index']],
+                        ['label' => 'Users', 'url' => ['users/index']],
+
+                    ]
+                ]);
+                ?>
+            </div>
+            <div class="col-md-10">
+                <?= Alert::widget() ?>
+                <?= $content ?>
+            </div>
+        </div>
     </div>
-</div>
 
 <footer class="footer">
     <div class="container">
