@@ -16,9 +16,6 @@
     </div>
     <div class="info">
         <div class="date"><?= $post->date?></div>
-        <div class="hits">
-            <img src="/web/images/posts/date.png" alt="" />Просмотров: <?=$post->hits?>			</div>
-        <div class="clear"></div>
     </div>
 </div>
 

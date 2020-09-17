@@ -17,9 +17,4 @@ class SefRules extends UrlRule
             $this->name = __CLASS__;
         }
     }
-
-    public function createUrl(){
-
-    }
-
 }

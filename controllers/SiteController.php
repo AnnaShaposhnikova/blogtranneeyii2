@@ -83,7 +83,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $query = Posts::find()->where(['hide' => 0]);
+        $query = Posts::find();
         $pagination = new Pagination([
             'defaultPageSize' => 5,
             'totalCount' => $query->count(),
@@ -180,7 +180,7 @@ class SiteController extends Controller
 
     public function actionSearch($q){
 //        $q = Yii::$app->getRequest()->get('q');
-        $query = Posts::find()->where(['hide' => 0])->where(['like','full_text', $q]);
+        $query = Posts::find()->where(['like','full_text', $q]);
 
         $pagination = new Pagination([
             'defaultPageSize' => 5,
