@@ -14,6 +14,7 @@ use yii\helpers\Url;
 <div class="posts-form">
 
     <?php $form = ActiveForm::begin(); ?>
+    <?php var_dump($model->errors)?>
 
     <?= $form->field($model, 'is_release')->checkbox() ?>
 
@@ -25,7 +26,11 @@ use yii\helpers\Url;
     </div>
     <?php }?>
 
-    <?= $form->field($model, 'imageFile')->fileInput() ?>
+    <?php
+    $fileField = $form->field($model, 'imageFile');
+    $fileField->enableClientValidation = false;
+    echo $fileField->fileInput();
+    ?>
 
     <?= $form->field($model, 'intro_text')->widget(Redactor::className())  ?>
 

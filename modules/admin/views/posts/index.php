@@ -25,9 +25,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             [
-                    'attribute' => 'is_release',
-                'label'  => 'is_release',
-                'filter'=>[0 => 'No', 1 => 'Yes'],
+                'attribute' => 'is_release',
+                'label' => 'is_release',
+                'filter' => [0 => 'No', 1 => 'Yes'],
                 'value' =>
                     function ($model) {
                         if ($model->is_release == 1) {
