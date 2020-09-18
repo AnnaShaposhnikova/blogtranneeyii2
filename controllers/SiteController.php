@@ -24,6 +24,7 @@ use app\models\SiteForm;
 
 class SiteController extends Controller
 {
+    public $layout = '@app/views/layouts/main';
     /**
      * {@inheritdoc}
      */
@@ -32,13 +33,20 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only' => ['login', 'logout', 'signup'],
                 'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['login', 'signup'],
+                        'roles' => ['?'],
+                    ],
+
                     [
                         'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+
                 ],
             ],
             'verbs' => [

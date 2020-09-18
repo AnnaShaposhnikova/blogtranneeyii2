@@ -62,8 +62,14 @@ $config = [
             'rules' => [
             ],
         ],
-
     ],
+//    'container' => [
+//        'definitions' => [
+//            'yii\widgets\ActiveForm' => [
+//                'enableClientValidation' => false,
+//            ],
+//        ],
+//    ],
     'params' => $params,
 
 ];
