@@ -4,12 +4,26 @@ namespace app\models;
 
 use app\traits\Restore;
 use app\traits\SoftDelete;
+use Yii;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 use yii\db\Expression;
 use yii\validators\EmailValidator;
 use yii\validators\RequiredValidator;
 use yii\validators\UniqueValidator;
 use yii\behaviors\TimestampBehavior;
+
+/**
+ * @property int $id
+ * @property int $role
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $email
+ * @property string $password
+ * @property string $created_at
+ * @property string $updated_at
+ * @property string $deleted_at
+ * */
 
 class Users extends ActiveRecord implements \yii\web\IdentityInterface
 {
@@ -17,34 +31,10 @@ class Users extends ActiveRecord implements \yii\web\IdentityInterface
     use SoftDelete;
     use Restore;
 
-//    public $id;
-//    public $first_name;
-//    public $last_name;
-//    public $password;
-//    public $authKey;
-//    public $accessToken;
-
     const USER_ROLE = 1;
     const ADMIN_ROLE = 2;
 
     const SCENARIO_ADMIN_CREATE = 'create';
-
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
 
     public static function tableName()
     {
@@ -84,14 +74,12 @@ class Users extends ActiveRecord implements \yii\web\IdentityInterface
         ];
 
     }
-
-
     /**
      * {@inheritdoc}
      */
     public static function findIdentity($id)
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return static::findOne($id);
     }
 
     /**
@@ -99,13 +87,7 @@ class Users extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        throw new Exception('Not emplemented');
     }
 
     /**
@@ -116,7 +98,7 @@ class Users extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public static function findByUsername($email)
     {
-        return static::findOne($email);
+        return static::findOne(['email'=> $email]);
     }
 
     /**
@@ -132,7 +114,7 @@ class Users extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public function getAuthKey()
     {
-        return $this->authKey;
+        return $this->id;
     }
 
     /**
@@ -151,7 +133,13 @@ class Users extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public function validatePassword($password)
     {
-        return $this->password === $password;
+//        return Yii::$app->security->validatePassword($password, $this->password);
+
+    return   password_verify($password,$this->password);
+    }
+
+   public function passwordHash($password){
+        return $this->password = password_hash($password,PASSWORD_ARGON2ID );
     }
 
 }

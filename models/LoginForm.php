@@ -4,16 +4,19 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use yii\validators\EmailValidator;
+use yii\validators\UniqueValidator;
 
 /**
  * LoginForm is the model behind the login form.
  *
- * @property User|null $user This property is read-only.
+ * @property Users|null $user This property is read-only.
  *
  */
 class LoginForm extends Model
 {
-    public $username;
+
+    public $email;
     public $password;
     public $rememberMe = true;
 
@@ -27,9 +30,10 @@ class LoginForm extends Model
     {
         return [
             // username and password are both required
-            [['username', 'password'], 'required'],
+            [['email', 'password'], 'required'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
+            ['email',EmailValidator::class],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
         ];
@@ -68,12 +72,12 @@ class LoginForm extends Model
     /**
      * Finds user by [[username]]
      *
-     * @return User|null
+     * @return Users|null
      */
     public function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username);
+            $this->_user = Users::findByUsername($this->email);
         }
 
         return $this->_user;

@@ -8,6 +8,7 @@ use app\models\UsersSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * UsersController implements the CRUD actions for Users model.
@@ -21,15 +22,28 @@ class UsersController extends Controller
     public function behaviors()
     {
         return [
-
-
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
                 ],
             ],
-
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index', 'view','create', 'update','delete'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view'],
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view','create', 'update','delete'],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
         ];
     }
 

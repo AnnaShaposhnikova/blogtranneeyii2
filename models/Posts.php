@@ -11,7 +11,6 @@ use yii\validators\FileValidator;
 use yii\validators\RequiredValidator;
 use yii\validators\SafeValidator;
 use yii\web\UploadedFile;
-use yii\helpers\FileHelper;
 
 class Posts extends ActiveRecord
 {

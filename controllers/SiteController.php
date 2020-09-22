@@ -15,9 +15,8 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Posts;
 use app\models\Courses;
-use app\models\Minicourses;
 
-use app\models\Sef;
+use app\models\RegisterForm;
 use app\models\Sites;
 use app\models\SiteForm;
 
@@ -25,6 +24,7 @@ use app\models\SiteForm;
 class SiteController extends Controller
 {
     public $layout = '@app/views/layouts/main';
+
     /**
      * {@inheritdoc}
      */
@@ -64,9 +64,9 @@ class SiteController extends Controller
     public function beforeAction($action)
     {
         $model = new SearchForm();
-        if ($model -> load(Yii::$app->request->post()) && $model->validate()){
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $q = Html::encode($model->q);
-            return $this->redirect(['site/search', 'q'=>$q]);
+            return $this->redirect(['site/search', 'q' => $q]);
         }
         return true;
     }
@@ -100,7 +100,7 @@ class SiteController extends Controller
             ->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
-        Posts::setNumber($posts);
+
         $active_page = Yii::$app->request->get('page', 1);
 
         return $this->render('index', [
@@ -177,18 +177,19 @@ class SiteController extends Controller
         }
     }
 
-    public function actionPost($id){
-        $post = Posts::find()->where(['id'=> $id])->one();
-        Posts::setNumber([$post]);
+    public function actionPost($id)
+    {
+        $post = Posts::find()->where(['id' => $id])->one();
 
-        return $this -> render ("post",[
+
+        return $this->render("post", [
             'post' => $post,
         ]);
     }
 
-    public function actionSearch($q){
-//        $q = Yii::$app->getRequest()->get('q');
-        $query = Posts::find()->where(['like','full_text', $q]);
+    public function actionSearch($q)
+    {
+        $query = Posts::find()->where(['like', 'full_text', $q]);
 
         $pagination = new Pagination([
             'defaultPageSize' => 5,
@@ -200,11 +201,41 @@ class SiteController extends Controller
         Posts::setNumber($posts);
         $active_page = Yii::$app->request->get('page', 1);
 
-        return $this-> render('search',[
-            'posts'=> $posts,
-            'q' =>$q,
-            'pagination'=> $pagination,
-            'active_page'=>$active_page,
+        return $this->render('search', [
+            'posts' => $posts,
+            'q' => $q,
+            'pagination' => $pagination,
+            'active_page' => $active_page,
         ]);
     }
+
+    public function actionLogin()
+    {
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+
+            return $this->redirect(['site/index']);
+        } else {
+            return $this->render('login',
+                ['model' => $model]);
+        }
+    }
+
+    public function actionRegister()
+    {
+        $model = new RegisterForm();
+        if ($model->load(Yii::$app->request->post()) && $model->register()) {
+            return $this->redirect(['site/index']);
+        }
+        return $this->render('register',
+            ['model' => $model]);
+    }
+
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->goHome();
+    }
+
 }
