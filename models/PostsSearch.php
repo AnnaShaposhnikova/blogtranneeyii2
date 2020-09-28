@@ -46,15 +46,15 @@ class PostsSearch extends Posts
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-//            'pagination' => [
-//                'pageSize' => 10,
-//            ],
-//            'sort' => [
-//                'defaultOrder' => [
-//                    'created_at' => SORT_DESC,
-//                    'title' => SORT_ASC,
-//                ]
-//            ]
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                    'title' => SORT_ASC,
+                ]
+            ]
         ]);
 
         $this->load($params);

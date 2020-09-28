@@ -32,7 +32,7 @@ $this->registerMetaTag([
             <img src="/web/images/hits.png" alt="Просмотров" />
         </div>
         <div>
-            <p><?=$post->hits?></p>
+            <p><?=$post->img?></p>
         </div>
         <?php include "likes.php"; ?>
 

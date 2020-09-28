@@ -2,15 +2,21 @@
 
 namespace app\controllers;
 
+use app\models\PostsSearch;
 use app\models\Reviews;
 use app\models\SearchForm;
+use app\models\Users;
 use Yii;
 use yii\data\Pagination;
+use yii\db\Exception;
+use yii\debug\models\timeline\DataProvider;
 use yii\filters\AccessControl;
 use yii\helpers\Html;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Posts;
@@ -33,16 +39,16 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['login', 'logout', 'signup'],
+                'only' => ['login', 'logout', 'register'],
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['login', 'signup'],
+                        'actions' => ['login', 'register'],
                         'roles' => ['?'],
                     ],
 
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout', 'profile'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -91,7 +97,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $query = Posts::find();
+
+        $query = Posts::find()->where(['is_release' => 1]);
         $pagination = new Pagination([
             'defaultPageSize' => 5,
             'totalCount' => $query->count(),
@@ -180,32 +187,15 @@ class SiteController extends Controller
     public function actionPost($id)
     {
         $post = Posts::find()->where(['id' => $id])->one();
+        $user = Yii::$app->user->identity;
 
+        if (!$post->is_release && (!$user || $post->user_id != $user->id)){
+
+            throw new NotFoundHttpException();
+        }
 
         return $this->render("post", [
             'post' => $post,
-        ]);
-    }
-
-    public function actionSearch($q)
-    {
-        $query = Posts::find()->where(['like', 'full_text', $q]);
-
-        $pagination = new Pagination([
-            'defaultPageSize' => 5,
-            'totalCount' => $query->count(),
-        ]);
-        $posts = $query->offset($pagination->offset)
-            ->limit($pagination->limit)
-            ->all();
-        Posts::setNumber($posts);
-        $active_page = Yii::$app->request->get('page', 1);
-
-        return $this->render('search', [
-            'posts' => $posts,
-            'q' => $q,
-            'pagination' => $pagination,
-            'active_page' => $active_page,
         ]);
     }
 
@@ -236,6 +226,31 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    public function actionProfile()
+    {
+
+        $user = Yii::$app->user->identity;
+
+        $query = Posts::find()->where((['user_id' => $user->getId()]));
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                    'title' => SORT_ASC,
+                ]
+            ],
+        ]);
+
+        return $this->render('profile', [
+            'user' => $user,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
 }

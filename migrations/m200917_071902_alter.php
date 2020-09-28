@@ -12,7 +12,11 @@ class m200917_071902_alter extends Migration
      */
     public function up()
     {
-        $this->addColumn('bl_posts','user_id',$this->integer()->unsigned()->defaultValue(null)->after('is_release'));
+        $this->addColumn('bl_posts','user_id',$this->integer()->unsigned()->notNull()->after('is_release'));
+        $this->addColumn('bl_posts','created_at',$this->timestamp()->notNull());
+        $this->addColumn('bl_posts','updated_at',$this->timestamp()->null());
+        $this->addColumn('bl_posts','deleted_at',$this->timestamp()->null());
+        $this->createIndex('user_id','bl_posts',['user_id']);
     }
 
     /**
